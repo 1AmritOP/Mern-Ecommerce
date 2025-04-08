@@ -4,6 +4,7 @@ import { newOrderReqBody } from "../types/types.js";
 import ErrorHandler from "../utils/utility-class.js";
 import { Order } from "../models/order.model.js";
 import { myCache } from "../app.js";
+import { invalidateCache } from "../utils/features.js";
 
 
 
@@ -82,6 +83,8 @@ export const newOrder = TryCatch(
         orderItems
     })
 
+    await invalidateCache({order:true, admin:true, product:true});
+
     return res.status(201).json({
         success:true,
         order
@@ -89,3 +92,46 @@ export const newOrder = TryCatch(
   }
 );
 
+export const processOrder=TryCatch(async(req,res,next)=>{
+  const {id} = req.params;
+  const order=await Order.findById(id)
+
+  if(!order) return next(new ErrorHandler("Product not Fount",404));
+
+  switch(order.status){
+    case "Processing":
+      order.status="Shipped";
+      break;
+    case "Shipped":
+      order.status="Delivered";
+      break;
+    default:
+      order.status="Delivered";
+      break;
+  }
+
+  await order.save();
+
+  await invalidateCache({order:false, admin:true, product:true});
+
+  return res.status(200).json({
+    success:true,
+    message:"Order Processed Successfully"
+  })
+})
+
+export const deleteOrder=TryCatch(async(req,res,next)=>{
+  const {id}=req.params;
+  const order=await Order.findByIdAndDelete(id);
+
+  if(!order){
+    return next(new ErrorHandler("Order not found",404));
+  }
+
+  await invalidateCache({order:false, admin:true, product:true});
+
+  return res.status(200).json({
+    success:true,
+    message:"Order deleted successfully"
+  })
+})
