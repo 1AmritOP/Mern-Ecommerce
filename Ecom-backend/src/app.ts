@@ -33,12 +33,13 @@ app.use(morgan("dev"));
 import userRoute from "./routes/user.routes.js"
 import productRoute from "./routes/product.routes.js"
 import orderRoute from "./routes/order.routes.js"
-
+import paymentRoute from "./routes/payment.routes.js"
 
 //Using Routes
 app.use("/api/v1/user",userRoute)
 app.use("/api/v1/product",productRoute)
 app.use("/api/v1/order",orderRoute)
+app.use("/api/v1/payment",paymentRoute)
 
 
 
