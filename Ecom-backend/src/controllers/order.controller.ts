@@ -8,6 +8,7 @@ import { invalidateCache } from "../utils/features.js";
 
 
 
+
 export const myOrders=TryCatch(async(req,res,next)=>{
   const { id:user }=req.query;
   const key=`my-oders-${user}`;
@@ -83,7 +84,7 @@ export const newOrder = TryCatch(
         orderItems
     })
 
-    await invalidateCache({order:true, admin:true, product:true});
+    await invalidateCache({order:true, admin:true, product:true, userId:user});
 
     return res.status(201).json({
         success:true,
@@ -112,7 +113,7 @@ export const processOrder=TryCatch(async(req,res,next)=>{
 
   await order.save();
 
-  await invalidateCache({order:false, admin:true, product:true});
+  await invalidateCache({order:true, admin:true, product:false, userId:order.user});
 
   return res.status(200).json({
     success:true,
@@ -128,7 +129,7 @@ export const deleteOrder=TryCatch(async(req,res,next)=>{
     return next(new ErrorHandler("Order not found",404));
   }
 
-  await invalidateCache({order:false, admin:true, product:true});
+  await invalidateCache({order:true, admin:true, product:false, userId:order.user});
 
   return res.status(200).json({
     success:true,

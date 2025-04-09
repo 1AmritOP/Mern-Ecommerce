@@ -50,7 +50,8 @@ export interface baseQuery{
 export type invalidateCacheProps={
     product?:boolean,
     order?:boolean,
-    admin?:boolean
+    admin?:boolean,
+    userId?:string
 }
 
 export type orderItemType={
