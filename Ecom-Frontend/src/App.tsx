@@ -2,10 +2,12 @@ import { BrowserRouter as Router, Routes, Route} from "react-router-dom"
 import { lazy, Suspense } from "react"
 import Loader from "./components/Loader";
 import Header from "./components/Header";
+// import Shipping from "./pages/Shipping";
 
 const Home = lazy(()=> import("./pages/Home"));
 const Cart = lazy(()=> import("./pages/Cart"));
 const Search = lazy(()=> import("./pages/Search"));
+const Shipping = lazy(()=> import("./pages/Shipping"));
 
 // admin routes importing
 
@@ -37,6 +39,11 @@ const App = () => {
           <Route path="/" element={<Home />} /> 
           <Route path="/cart" element={<Cart />} /> 
           <Route path="/search" element={<Search />} /> 
+
+          {/* logged in user routes */}
+          <Route>
+            <Route path="/shipping" element={<Shipping />} />
+          </Route>
 
 
           {/* admin routes */}
