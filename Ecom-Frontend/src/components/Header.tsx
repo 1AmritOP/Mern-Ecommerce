@@ -4,7 +4,7 @@ import { FaSearch, FaShoppingBag, FaSignInAlt, FaSignOutAlt, FaUser } from 'reac
 import {Link} from "react-router-dom"
 
 const Header = () => {
-    const user={_id:"1",role: "admin"};
+    const user={_id:"",role: ""};
     const [isOpen, setisOpen] = useState <boolean> (false)
     const logOutHandler=()=>{
         setisOpen(false)
