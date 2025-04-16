@@ -1,14 +1,29 @@
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useState } from "react"
+import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
+import { auth } from "../firebase";
 
 
 const Login = () => {
+
     const [gender,setGender]=useState("");
     const [date,setDate]=useState("");
-    const loginHandler=()=>{};
+    const loginHandler= async()=>{
+      try {
+        const provider= new GoogleAuthProvider();
+
+        const { user }=await signInWithPopup(auth,provider);
+
+        console.log(user)
+
+      } catch (error) {
+        toast.error("Sign in failed");
+      }
+    };
   return (
     <div className="login">
-              <main>
+      <main>
         <h1 className="heading">Login</h1>
 
         <div>
@@ -21,8 +36,10 @@ const Login = () => {
         </div>
 
         <div>
-          <label>Date of birth</label>
+          <label htmlFor="date" >Date of birth</label>
           <input
+            id="date"
+            name="date"
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}

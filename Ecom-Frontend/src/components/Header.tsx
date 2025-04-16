@@ -39,7 +39,7 @@ const Header = () => {
                         {user.role === "admin" && (
                             <Link onClick={()=> setisOpen(false)} to={"/admin/dashboard"}>Admin</Link>
                         )}
-                        <Link onClick={()=> setisOpen(false)} to={"/oders"} > Orders </Link>
+                        <Link onClick={()=> setisOpen(false)} to={"/orders"} > Orders </Link>
                         <button onClick={logOutHandler}>
                             <FaSignOutAlt />
                         </button>
