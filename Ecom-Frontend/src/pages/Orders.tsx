@@ -12,6 +12,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useSelector } from "react-redux";
 
 type DataType = {
   _id: string;

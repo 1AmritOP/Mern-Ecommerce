@@ -1,23 +1,4 @@
-.dashboard-product-box {
-  background-color: white;
-  padding: 2rem;
-  overflow: auto;
-  @include square(100%);
-}
 
-.create-product-btn {
-  position: fixed;
-  right: 2rem;
-  top: 2rem;
-  @include square(2.5rem);
-  @include flex(row, center, center, 0);
-  border-radius: 50%;
-  background-color: rgb(201, 9, 9);
-  color: white;
-  &:hover {
-    opacity: 0.8;
-  }
-}
 .product-delete-btn {
   background-color: rgb(56, 56, 56);
   color: white;
@@ -176,4 +157,94 @@
   > span {
     margin-left: auto;
   }
+}
+
+/* Container styling */
+.dashboard-product-box {
+  margin-top: 1.2rem;
+  margin-left: -1.2rem;
+  width: 100%;
+  overflow-x: auto;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Table styling */
+.dashboard-product-box table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+/* Table header */
+.dashboard-product-box th {
+  background-color: #f4f6f8;
+  color: #333;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #eaeaea;
+  white-space: nowrap;
+}
+
+/* Table rows */
+.dashboard-product-box td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eaeaea;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* Zebra striping */
+.dashboard-product-box tr:nth-child(even) td {
+  background-color: #fafafa;
+}
+
+/* Hover effect */
+.dashboard-product-box tr:hover td {
+  background-color: #f1f5f9;
+}
+
+/* Image cells */
+.dashboard-product-box td img {
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* Action link styling */
+.dashboard-product-box a {
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.dashboard-product-box a:hover {
+  text-decoration: underline;
+}
+
+/* Create Product Floating Button */
+.create-product-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.create-product-btn:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
 }
