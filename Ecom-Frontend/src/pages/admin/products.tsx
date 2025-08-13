@@ -36,6 +36,8 @@ const Products = () => {
     toast.error(err.data.message);
   }
 
+  console.log(data);
+  
   useEffect(() => {
     if (data) {
       setTableData(

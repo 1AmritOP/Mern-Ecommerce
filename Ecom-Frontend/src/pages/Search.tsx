@@ -1,18 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
+import {
+  useCategoriesQuery,
+  useSearchProductQuery,
+} from "../redux/api/productApi";
+import { CustomError } from "../types/api-types";
+import toast from "react-hot-toast";
+import { Skeleton } from "../components/Loader";
 
 const Search = () => {
+  const {
+    data: categoriesResponse,
+    isLoading: loadingCategories,
+    isError,
+    error,
+  } = useCategoriesQuery("");
+
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
-  const [maxPrice, setMaxPrice] = useState(100000);
+  const [maxPrice, setMaxPrice] = useState(200000);
   const [category, setCategory] = useState("");
   const [page, setPage] = useState(1);
 
+  const { data: searchedData, isLoading: productLoading, isError: productIsError,error: productError } =
+    useSearchProductQuery({
+      price: maxPrice,
+      page,
+      sort,
+      category,
+      search,
+    });
 
-  const isPrevPage= true;
-  const isNextPage= true;
+  console.log(searchedData);
+
+  const isPrevPage = page > 1;
+  const isNextPage = page < 10;
 
   const addToCartHandler = () => {};
+
+  if (isError) {
+    const err = error as CustomError;
+    toast.error(err.data.message);
+  }
+  if (productIsError) {
+    const err= productError as CustomError;
+    toast.error(err.data.message);
+  }
+
   return (
     <div className="product-search-page">
       <aside>
@@ -31,7 +65,7 @@ const Search = () => {
           <input
             type="range"
             min={100}
-            max={100000}
+            max={250000}
             value={maxPrice}
             onChange={(e) => setMaxPrice(Number(e.target.value))}
           />
@@ -44,8 +78,12 @@ const Search = () => {
             onChange={(e) => setCategory(e.target.value)}
           >
             <option value="">ALL</option>
-            <option value="men">Men</option>
-            <option value="women">Car</option>
+            {loadingCategories === false &&
+              categoriesResponse?.categories.map((category) => (
+                <option key={category} value={category}>
+                  {category.toUpperCase()}
+                </option>
+              ))}
           </select>
         </div>
       </aside>
@@ -58,38 +96,49 @@ const Search = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <div className="search-product-list">
-          <ProductCard
-            productId="1"
-            name="Product 1"
-            photo="https://cdn.mos.cms.futurecdn.net/QMa729pgead8uFrroav5f5.jpg"
-            price={100}
-            stock={10}
-            handler={addToCartHandler}
-          />
-        </div>
+        {productLoading ? (
+          <Skeleton />
+        ) : (
+          <div className="search-product-list">
+            {searchedData?.products.map((i) => (
+              <ProductCard
+                key={i._id}
+                productId={i._id}
+                name={i.name}
+                photo={i.photo}
+                price={i.price}
+                stock={i.stock}
+                handler={addToCartHandler}
+              />
+            ))}
+          </div>
+        )}
 
-        <article>
-          <button 
-          disabled={!isPrevPage}
-          onClick={() => {
-            setPage((prev) => prev -1);
-          }}
-          >
-            Prev
-          </button>
+        {searchedData && searchedData.totalPage > 1 && (
+          <article>
+            <button
+              disabled={!isPrevPage}
+              onClick={() => {
+                setPage((prev) => prev - 1);
+              }}
+            >
+              Prev
+            </button>
 
-          <span>{page} of {10}</span>
+            <span>
+              {page} of {searchedData.totalPage}
+            </span>
 
-          <button 
-          disabled={!isNextPage}
-          onClick={() => {
-            setPage((prev) => prev +1);
-          }}
-          >
-            Next
-          </button>
-        </article>
+            <button
+              disabled={!isNextPage}
+              onClick={() => {
+                setPage((prev) => prev + 1);
+              }}
+            >
+              Next
+            </button>
+          </article>
+        )}
       </main>
     </div>
   );

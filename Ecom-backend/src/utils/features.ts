@@ -14,7 +14,7 @@ export const invalidateCache = async ({
     const productKeys: string[] = [
       "latest-products",
       "categories",
-      "all-products",
+      "all-product",
     ];
 
     if (typeof productId === "string") productKeys.push(`product-${productId}`);
