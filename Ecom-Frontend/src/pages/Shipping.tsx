@@ -5,14 +5,14 @@ import { BiArrowBack } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { RootState } from "../redux/store";
+import { RootState, server } from "../redux/store";
 import { saveShippingInfo } from "../redux/reducer/cartReducure";
 
 const Shipping = () => {
   const { cartItems,total } = useSelector(
     (state: RootState) => state.cartReducer
   );
-  // const { user } = useSelector((state: RootState) => state.userReducer);
+  const { user } = useSelector((state: RootState) => state.userReducer);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const Shipping = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/v1/payment/create",
+        `${server}/api/v1/payment/create?id=${user?._id}`,
         {
           amount: total
         },
