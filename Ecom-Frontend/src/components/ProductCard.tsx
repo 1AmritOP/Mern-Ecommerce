@@ -1,13 +1,14 @@
 // import React from 'react'
 import {FaPlus} from "react-icons/fa"
 import { server } from "../redux/store"
+import { CartItem } from "../types/types"
 type ProductsProps={
     productId:string,
     name:string,
     photo:string,
     price:number,
     stock:number,
-    handler:()=> void,
+    handler:(cartItem:CartItem)=> string | undefined,
 }
 const ProductCard = ({
     productId,
@@ -25,7 +26,7 @@ const ProductCard = ({
       <p>{name}</p>
       <span>₹ {price.toLocaleString("en-IN")}</span>
       <div>
-        <button onClick={()=> handler()}>
+        <button onClick={()=> handler({productId,name,price,quantity:1,photo,stock})}>
           <FaPlus />
         </button>
       </div>

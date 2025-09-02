@@ -1,18 +1,16 @@
 import { ReactElement, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-// import { useSelector } from "react-redux";
-// import { useMyOrdersQuery } from "../redux/api/orderAPI";
-// import { RootState } from "../redux/store";
-// import { CustomError } from "../types/api-types";
-// import { Skeleton } from "../components/loader";
-
+import { useSelector } from "react-redux";
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useSelector } from "react-redux";
+import { Skeleton } from "../components/Loader";
+import { useMyOrdersQuery } from "../redux/api/orderAPI";
+import { CustomError } from "../types/api-types";
+import { userReducerInitialState } from "../types/reducer-types";
 
 type DataType = {
   _id: string;
@@ -23,41 +21,41 @@ type DataType = {
 };
 
 const Orders = () => {
-//   const { user } = useSelector((state: RootState) => state.userReducer);
-//   const { isLoading, data, isError, error } = useMyOrdersQuery(user?._id!);
+  const { user } = useSelector((state: { userReducer: userReducerInitialState } ) => state.userReducer);
 
-  const [tableData, setTableData] = useState<DataType[]>([]);
+  const { isLoading, data, isError, error } = useMyOrdersQuery(user?._id!);
 
-//   if (isError) {
-//     const err = error as CustomError;
-//     toast.error(err.data.message);
-//   }
+  const [rows, setRows] = useState<DataType[]>([]);
 
-//   useEffect(() => {
-//     if (data) {
-//       setTableData(
-//         data.orders.map((i) => ({
-//           _id: i._id,
-//           amount: i.total,
-//           discount: i.discount,
-//           quantity: i.orderItems.length,
-//           status: (
-//             <span
-//               className={
-//                 i.status === "Processing"
-//                   ? "red"
-//                   : i.status === "Shipped"
-//                   ? "green"
-//                   : "purple"
-//               }
-//             >
-//               {i.status}
-//             </span>
-//           ),
-//         }))
-//       );
-//     }
-//   }, [data]);
+  if (isError) {
+    const err = error as CustomError;
+    toast.error(err.data.message);
+  }
+
+  useEffect(() => {
+    if (data)
+      setRows(
+        data.orders.map((i) => ({
+          _id: i._id,
+          amount: i.total,
+          discount: i.discount,
+          quantity: i.orderItems.length,
+          status: (
+            <span
+              className={
+                i.status === "Processing"
+                  ? "red"
+                  : i.status === "Shipped"
+                  ? "green"
+                  : "purple"
+              }
+            >
+              {i.status}
+            </span>
+          ),
+        }))
+      );
+  }, [data]);
 
   const columns = useMemo<ColumnDef<DataType>[]>(
     () => [
@@ -80,14 +78,14 @@ const Orders = () => {
       {
         header: "Status",
         accessorKey: "status",
-        cell: ({ row }) => row.original.status,
+        cell: (info) => info.getValue() as ReactElement,
       },
     ],
     []
   );
 
   const table = useReactTable({
-    data: tableData,
+    data: rows,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -96,40 +94,35 @@ const Orders = () => {
     <div className="container">
       <h1>My Orders</h1>
       {isLoading ? (
-        <Skeleton length={20} />
+        <Skeleton  />
       ) : (
-        <div className="dashboard-product-box">
-          <table>
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id}>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {/* {flexRender(
-                        cell.column.columnDef.cell ?? cell.column.columnDef.header,
-                        cell.getContext()
-                      )} */}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <table className="dashboard-product-box">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id}>
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

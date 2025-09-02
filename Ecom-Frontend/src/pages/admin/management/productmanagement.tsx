@@ -8,7 +8,7 @@ import {
   useProductDetailsQuery,
   useUpdateProductMutation,
 } from "../../../redux/api/productApi";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { server } from "../../../redux/store";
 import { Skeleton } from "../../../components/Loader";
 import { responseToast } from "../../../utils/features";
@@ -21,7 +21,7 @@ const Productmanagement = () => {
 
   const params = useParams();
 
-  const { data, isLoading } = useProductDetailsQuery(params.id!);
+  const { data, isLoading, isError } = useProductDetailsQuery(params.id!);
 
   const { photo, name, price, stock, category } = data?.product || {
     _id: "",
@@ -94,6 +94,9 @@ const Productmanagement = () => {
     }
   }, [data]);
 
+  if(isError) return <Navigate to={"/404"} />
+
+
   return (
     <div className="admin-container">
       <AdminSidebar />
@@ -134,6 +137,7 @@ const Productmanagement = () => {
                     type="number"
                     placeholder="Price"
                     value={priceUpdate}
+                    min={0}
                     onChange={(e) => setPriceUpdate(Number(e.target.value))}
                   />
                 </div>
@@ -143,6 +147,7 @@ const Productmanagement = () => {
                     type="number"
                     placeholder="Stock"
                     value={stockUpdate}
+                    min={0}
                     onChange={(e) => setStockUpdate(Number(e.target.value))}
                   />
                 </div>

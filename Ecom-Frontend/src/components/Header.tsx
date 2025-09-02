@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import { FaSearch, FaShoppingBag, FaSignInAlt, FaSignOutAlt, FaUser } from 'react-icons/fa'
 import {Link} from "react-router-dom"
 import { auth } from '../firebase';
+import { useSelector } from 'react-redux';
+import { cartReducerInitialState } from '../types/reducer-types';
 
 
 interface PropsType {
@@ -12,6 +14,8 @@ interface PropsType {
 }
 
 const Header = ({user}: PropsType) => {
+
+    const {cartItems}=useSelector((state: {cartReducer : cartReducerInitialState}) => state.cartReducer);
     
     const [isOpen, setisOpen] = useState <boolean> (false)
     const logOutHandler= async()=>{
@@ -21,7 +25,8 @@ const Header = ({user}: PropsType) => {
             setisOpen(false);
             
         } catch (error) {
-            toast.error("Sign out failed ",);
+            console.log(error);
+            toast.error("Sign out failed ");
         }
     }
   return (
@@ -37,10 +42,11 @@ const Header = ({user}: PropsType) => {
         </Link>
 
 
-        <Link 
+        <Link className='cart-icon'
         onClick={()=> setisOpen(false)}
         to="/cart">
             <FaShoppingBag/>
+            <small>{cartItems.length}</small>
         </Link>
 
         {

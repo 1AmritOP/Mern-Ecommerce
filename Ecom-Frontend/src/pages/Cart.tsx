@@ -1,37 +1,89 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VscError } from "react-icons/vsc";
-import CartItem from "../components/Cart-item";
+import CartItemCard from "../components/Cart-item";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@reduxjs/toolkit/query";
+import { CartItem } from "../types/types";
+import {
+  addToCart,
+  calculatePrice,
+  discountApplied,
+  removeCartItem,
+} from "../redux/reducer/cartReducure";
+import axios from "axios";
+import { server } from "../redux/store";
 import { cartReducerInitialState } from "../types/reducer-types";
 
-
-
 const Cart = () => {
-  const { cartItems, subtotal, tax, shippingCharges, discount, total } =
-    useSelector(
-      (state: { cartRdeucer: cartReducerInitialState }) => state.cartRdeucer
-    );
+  const dispatch = useDispatch();
+  // const { cartItems, subtotal, tax, shippingCharges, discount, total } =
+  //   useSelector(
+  //     (state: { cartRdeucer: cartReducerInitialState }) => state.cartRdeucer
+  //   );
 
-    console.log('====================================');
-    console.log(cartItems);
-    console.log('====================================');
+  const { cartItems, subtotal, tax, total, shippingCharges, discount } =
+    useSelector((state: {cartReducer : cartReducerInitialState}) => state.cartReducer);
+
+  // console.log(cartItems);
 
   const [couponCode, setCouponCode] = useState<string>("");
   const [isValidCouponCode, setIsValidCouponCode] = useState<boolean>(false);
+
+  const increamentHandler = (cartItem: CartItem) => {
+    if (cartItem.quantity >= cartItem.stock) return;
+    dispatch(addToCart({ ...cartItem, quantity: cartItem.quantity + 1 }));
+  };
+  const decreamentHandler = (cartItem: CartItem) => {
+    if (cartItem.quantity <= 1) return;
+    dispatch(addToCart({ ...cartItem, quantity: cartItem.quantity - 1 }));
+  };
+  const removeHandler = (id: string) => {
+    dispatch(removeCartItem(id));
+  };
+
+  useEffect(() => {
+    const { token: cancelToken, cancel } = axios.CancelToken.source();
+
+    const timeOutID = setTimeout(() => {
+      axios
+        .get(`${server}/api/v1/payment/discount?coupon=${couponCode}`, {
+          cancelToken,
+        })
+        .then((res) => {
+          dispatch(discountApplied(res.data.discount));
+          console.log(res.data);
+          setIsValidCouponCode(true);
+        })
+        .catch((e) => {
+          console.log(e.response.data);
+          dispatch(discountApplied(0));
+          setIsValidCouponCode(false);
+        });
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeOutID);
+      cancel();
+      setIsValidCouponCode(false);
+    };
+  }, [couponCode]);
+
+  useEffect(() => {
+    dispatch(calculatePrice());
+  }, [cartItems, discount]);
 
   return (
     <div className="cart">
       <main>
         {cartItems.length > 0 ? (
-          cartItems.map((item) => (
-            <CartItem
-              key={item.productId}
-              productId={item.productId}
-              name={item.name}
-              price={item.price}
-              quantity={item.quantity}
-              image={item.image}
+          cartItems.map((item, idx) => (
+            <CartItemCard
+              incrementHandler={increamentHandler}
+              decrementHandler={decreamentHandler}
+              removeHandler={removeHandler}
+              key={idx}
+              cartItem={item}
             />
           ))
         ) : (

@@ -1,92 +1,129 @@
-import { ReactElement, useState } from "react";
+import { JSX, useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
-import { ColumnDef } from "@tanstack/react-table";
+import { useSelector } from "react-redux";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  ColumnDef,
+} from "@tanstack/react-table";
 import AdminSidebar from "../../components/admin/AdminSidebar";
-import TableHOC from "../../components/admin/TableHOC";
+import { Skeleton } from "../../components/Loader";
+import {
+  useAllUserQuery,
+  useDeleteUserMutation,
+} from "../../redux/api/userApi";
+import { RootState } from "../../redux/store";
+import { CustomError } from "../../types/api-types";
+import { responseToast } from "../../utils/features";
 
 interface DataType {
-  avatar: ReactElement;
+  avatar: JSX.Element;
   name: string;
   email: string;
   gender: string;
   role: string;
-  action: ReactElement;
+  action: JSX.Element;
 }
 
-const columns: ColumnDef<DataType>[] = [
-  {
-    header: "Avatar",
-    accessorKey: "avatar",
-    cell: ({ row }) => row.original.avatar,
-  },
-  {
-    header: "Name",
-    accessorKey: "name",
-  },
-  {
-    header: "Gender",
-    accessorKey: "gender",
-  },
-  {
-    header: "Email",
-    accessorKey: "email",
-  },
-  {
-    header: "Role",
-    accessorKey: "role",
-  },
-  {
-    header: "Action",
-    accessorKey: "action",
-    cell: ({ row }) => row.original.action,
-  },
-];
-
-const img = "https://randomuser.me/api/portraits/women/54.jpg";
-const img2 = "https://randomuser.me/api/portraits/women/50.jpg";
-
-const arr: Array<DataType> = [
-  {
-    avatar: <img style={{ borderRadius: "50%" }} src={img} alt="Avatar" />,
-    name: "Emily Palmer",
-    email: "emily.palmer@example.com",
-    gender: "female",
-    role: "user",
-    action: (
-      <button>
-        <FaTrash />
-      </button>
-    ),
-  },
-  {
-    avatar: <img style={{ borderRadius: "50%" }} src={img2} alt="Avatar" />,
-    name: "May Scoot",
-    email: "aunt.may@example.com",
-    gender: "female",
-    role: "user",
-    action: (
-      <button>
-        <FaTrash />
-      </button>
-    ),
-  },
-];
-
 const Customers = () => {
-  const [rows, setRows] = useState<DataType[]>(arr);
+  const { user } = useSelector((state: RootState) => state.userReducer);
 
-  const Table = TableHOC<DataType>({
-    columns,
+  const { isLoading, data, isError, error } = useAllUserQuery(user?._id!);
+  const [rows, setRows] = useState<DataType[]>([]);
+  const [deleteUser] = useDeleteUserMutation();
+
+  const deleteHandler = async (userId: string) => {
+    const res = await deleteUser({ userId, adminUserId: user?._id! });
+    responseToast(res, null, "");
+  };
+
+  if (isError) {
+    const err = error as CustomError;
+    toast.error(err.data.message);
+  }
+
+  useEffect(() => {
+    
+    if (data)
+      setRows(
+        data.user.map((i) => ({
+          avatar: (
+            <img
+              style={{ borderRadius: "50%", width: "40px", height: "40px" }}
+              src={i.photo}
+              alt={i.name}
+            />
+          ),
+          name: i.name,
+          email: i.email,
+          gender: i.gender,
+          role: i.role,
+          action: (
+            <button type="button" onClick={() => deleteHandler(i._id)}>
+              <FaTrash />
+            </button>
+          ),
+        }))
+      );
+  }, [data]);
+
+  // Define columns with TanStack Table
+  const columns = useMemo<ColumnDef<DataType>[]>(
+    () => [
+      { accessorKey: "avatar", header: "Avatar", cell: (info) => info.getValue() },
+      { accessorKey: "name", header: "Name" },
+      { accessorKey: "gender", header: "Gender" },
+      { accessorKey: "email", header: "Email" },
+      { accessorKey: "role", header: "Role" },
+      { accessorKey: "action", header: "Action", cell: (info) => info.getValue() },
+    ],
+    []
+  );
+
+  const table = useReactTable({
     data: rows,
-    containerClassname: "dashboard-product-box",
-    heading: "Customers",
-    showPagination: rows.length > 6,
-  })();
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <div className="admin-container">
       <AdminSidebar />
-      <main>{Table}</main>
+      <main>
+        {isLoading ? (
+          <Skeleton />
+        ) : (
+          <div className="dashboard-product-box">
+            <h2>Customers</h2>
+            <table>
+              <thead>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th key={header.id}>
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.map((row) => (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </main>
     </div>
   );
 };

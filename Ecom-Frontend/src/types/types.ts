@@ -1,35 +1,135 @@
-export type User={
+export type User = {
+  name: string;
+  email: string;
+  photo: string;
+  gender: string;
+  role: string;
+  dob: string;
+  _id: string;
+};
+
+export type Product = {
+  _id: string;
+  name: string;
+  photo: string;
+  category: string;
+  price: number;
+  stock: number;
+};
+
+export type CartItem = {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  photo: string;
+  stock: number;
+};
+
+export type shippingInfoType = {
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  pincode: string;
+};
+
+export type OrderItem = Omit<CartItem, "stock"> & { _id: string };
+
+export type Order = {
+  orderItems: OrderItem[];
+  shippingInfo: shippingInfoType;
+  subtotal: number;
+  tax: number;
+  shippingCharges: number;
+  discount: number;
+  total: number;
+  status: string;
+  user: {
     name: string;
-    email: string;
-    photo: string;
-    gender: string;
-    role: string;
-    dob: string;
     _id: string;
-}
+  };
+  _id: string;
+};
 
-export type Product ={
-    _id: string;
-    name: string;
-    photo: string;
-    category: string;
-    price: number;
-    stock: number;
-}
+type CountAndChange = {
+  revenue: number;
+  product: number;
+  user: number;
+  order: number;
+};
 
-export type CartItem={
-    productId: string;
-    name: string;
-    price: number;
-    quantity: number;
-    photo: string;
-    stock: number;
-}
+type LatestTransaction = {
+  _id: string;
+  amount: number;
+  discount: number;
+  quantity: number;
+  status: string;
+};
 
-export type shippingInfoType ={
-    address: string;
-    city: string;
-    state: string;
-    country: string;
-    pinCode: string;
-}
+export type Stats = {
+  categoryCount: Record<string, number>[];
+  changePercent: CountAndChange;
+  count: CountAndChange;
+  chart: {
+    order: number[];
+    revenue: number[];
+  };
+  userRatio: {
+    male: number;
+    female: number;
+  };
+  latestTransaction: LatestTransaction[];
+};
+type OrderFullfillment = {
+  processing: number;
+  shipped: number;
+  delivered: number;
+};
+
+type RevenueDistribution = {
+  netMargin: number;
+  discount: number;
+  productionCost: number;
+  burnt: number;
+  marketingCost: number;
+};
+
+type UsersAgeGroup = {
+  teen: number;
+  adult: number;
+  old: number;
+};
+
+export type Pie = {
+  orderFullfillment: OrderFullfillment;
+  productCategories: Record<string, number>[];
+  stockAvailablity: {
+    inStock: number;
+    outOfStock: number;
+  };
+  revenueDistribution: RevenueDistribution;
+  usersAgeGroup: UsersAgeGroup;
+  adminCustomer: {
+    admin: number;
+    customer: number;
+  };
+};
+
+export type Bar = {
+  users: number[];
+  products: number[];
+  orders: number[];
+};
+export type Line = {
+  users: number[];
+  products: number[];
+  discount: number[];
+  revenue: number[];
+};
+
+export type CouponType = {
+  code: string;
+  amount: number;
+  _id: string;
+};
