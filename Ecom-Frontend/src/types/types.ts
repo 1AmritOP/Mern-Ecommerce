@@ -104,12 +104,12 @@ type UsersAgeGroup = {
 export type Pie = {
   orderFullfillment: OrderFullfillment;
   productCategories: Record<string, number>[];
-  stockAvailablity: {
+  stcokAvailability: {
     inStock: number;
     outOfStock: number;
   };
   revenueDistribution: RevenueDistribution;
-  usersAgeGroup: UsersAgeGroup;
+  userAgeGroup: UsersAgeGroup;
   adminCustomer: {
     admin: number;
     customer: number;

@@ -9,6 +9,7 @@ import { Skeleton } from "../components/Loader";
 import { CartItem } from "../types/types";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/reducer/cartReducure";
+import { useState } from "react";
 
 const Search = () => {
   const dispatch=useDispatch();
@@ -130,7 +131,7 @@ const Search = () => {
             <button
               disabled={!isPrevPage}
               onClick={() => {
-                setPage((prev) => prev - 1);
+                setPage((prev:number) => prev - 1);
               }}
             >
               Prev
@@ -143,7 +144,7 @@ const Search = () => {
             <button
               disabled={!isNextPage}
               onClick={() => {
-                setPage((prev) => prev + 1);
+                setPage((prev:number) => prev + 1);
               }}
             >
               Next
