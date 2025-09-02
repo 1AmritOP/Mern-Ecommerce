@@ -8,8 +8,6 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { MessageResponse } from "../types/api-types";
 import { useDispatch } from "react-redux";
 import { userExist, userNotExist } from "../redux/reducer/userReducer";
-import { User } from "../types/types";
-
 
 const Login = () => {
   const dispatch=useDispatch();
