@@ -26,7 +26,9 @@ interface DataType {
 }
 
 const Products = () => {
-  const { user } = useSelector((state: {userReducer : userReducerInitialState}) => state.userReducer);
+  const { user } = useSelector(
+    (state: { userReducer: userReducerInitialState }) => state.userReducer
+  );
   const { isLoading, isError, error, data } = useAllProductQuery(user?._id!);
 
   const [tableData, setTableData] = useState<DataType[]>([]);
@@ -37,7 +39,7 @@ const Products = () => {
   }
 
   console.log(data);
-  
+
   useEffect(() => {
     if (data) {
       setTableData(
@@ -115,10 +117,17 @@ const Products = () => {
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id}>
                         {flexRender(
-                          cell.column.columnDef.cell ?? cell.column.columnDef.header,
+                          cell.column.columnDef.cell,
                           cell.getContext()
                         )}
                       </td>
+
+                      // <td key={cell.id}>
+                      //   {flexRender(
+                      //     cell.column.columnDef.cell ?? cell.column.columnDef.header,
+                      //     cell.getContext()
+                      //   )}
+                      // </td>
                     ))}
                   </tr>
                 ))}

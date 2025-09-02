@@ -14,6 +14,8 @@ const Barcharts = () => {
   const { user } = useSelector((state: RootState) => state.userReducer);
 
   const { isLoading, data, error, isError } = useBarQuery(user?._id!);
+  // console.log(data);
+  
 
   const products = data?.charts.products || [];
   const orders = data?.charts.orders || [];

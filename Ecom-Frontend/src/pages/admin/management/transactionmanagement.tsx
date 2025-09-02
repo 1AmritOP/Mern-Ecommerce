@@ -58,7 +58,7 @@ const TransactionManagement = () => {
   const [updateOrder] = useUpdateOrderMutation();
   const [deleteOrder] = useDeleteOrderMutation();
 
-  const [order, setOrder] = useState({});
+  // const [order, setOrder] = useState({});
 
   const updateHandler = async () => {
     const res = await updateOrder({

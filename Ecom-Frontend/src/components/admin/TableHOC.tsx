@@ -22,17 +22,17 @@ type TableHOCProps<T> = {
 
 function TableHOC<T>({ columns, data, containerClassname, heading, showPagination = false }: TableHOCProps<T>) {
   return function HOC() {
-    const [sorting, setSorting] = useState([]);
+    // const [sorting, setSorting] = useState([]);
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 6 });
 
     const table = useReactTable({
       data,
       columns,
       state: {
-        sorting,
+        // sorting,
         pagination,
       },
-      onSortingChange: setSorting,
+      // onSortingChange: setSorting,
       onPaginationChange: setPagination,
       getCoreRowModel: getCoreRowModel(),
       getSortedRowModel: getSortedRowModel(),

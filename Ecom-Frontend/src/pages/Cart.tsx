@@ -3,7 +3,6 @@ import { VscError } from "react-icons/vsc";
 import CartItemCard from "../components/Cart-item";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@reduxjs/toolkit/query";
 import { CartItem } from "../types/types";
 import {
   addToCart,

@@ -1,5 +1,5 @@
 
-import { signOut, User } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { FaSearch, FaShoppingBag, FaSignInAlt, FaSignOutAlt, FaUser } from 'react-icons/fa'
@@ -7,6 +7,7 @@ import {Link} from "react-router-dom"
 import { auth } from '../firebase';
 import { useSelector } from 'react-redux';
 import { cartReducerInitialState } from '../types/reducer-types';
+import { User } from '../types/types';
 
 
 interface PropsType {
@@ -52,7 +53,7 @@ const Header = ({user}: PropsType) => {
         {
             user?._id?
             <>
-                <button onClick={()=> setisOpen(!isOpen)}>
+                <button  onClick={()=> setisOpen(!isOpen)}>
                     <FaUser />
                 </button>
                 <dialog open={isOpen}>

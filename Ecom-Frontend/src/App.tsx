@@ -9,8 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { userExist, userNotExist } from "./redux/reducer/userReducer";
 import { getUser } from "./redux/api/userApi";
 import { User } from "./types/types";
-import { userReducerInitialState } from "./types/reducer-types";
+// import { userReducerInitialState } from "./types/reducer-types";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { RootState } from "./redux/store";
 // import Shipping from "./pages/Shipping";
 
 const Home = lazy(()=> import("./pages/Home"));
@@ -44,8 +45,11 @@ const TransactionManagement = lazy(
 
 
 const App = () => {
+    const { user, loading } = useSelector(
+    (state: RootState) => state.userReducer
+  );
 
-  const { user,loading }= useSelector((state: {userReducer : userReducerInitialState}) => state.userReducer);
+  // const { user,loading }= useSelector((state: {userReducer : userReducerInitialState}) => state.userReducer);
 
   const dispatch=useDispatch();
 
